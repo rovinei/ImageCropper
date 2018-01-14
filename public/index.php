@@ -12,6 +12,7 @@ $manager = new ImageManager(array('driver' => 'imagick'));
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Image preview cropper</title>
+	<<script src="./assets/js/require.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="./assets/css/main.css">
 </head>
 <body>

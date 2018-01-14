@@ -23,6 +23,7 @@
   "homepage": "https://github.com/rovinei/ImageCropper#readme",
   "dependencies": {
     "cropper": "^3.1.4",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "requirejs": "^2.3.5"
   }
 }
