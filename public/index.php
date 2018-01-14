@@ -1,13 +1,12 @@
 <?php
 // include composer autoload
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use Intervention\Image\ImageManager;
 
 $manager = new ImageManager(array('driver' => 'imagick'));
 
 ?>
-<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
