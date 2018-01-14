@@ -12,7 +12,7 @@ Sets a maximum amount of memory in bytes that a script is allowed to allocate. R
 
 php Extensions : 
 
-PHP >= 5.4
+PHP >= 7.0
 Fileinfo Extension
 GD Library (>=2.0) … or …
 Imagick PHP extension (>=6.5.7)
@@ -32,5 +32,10 @@ brew install optipng
 brew install pngquant
 brew install svgo
 brew install gifsicle
+
+
+brew install --with-openssl curl
+brew install --with-homebrew-curl --with-apache php71
+brew install php71-mcrypt php71-imagick
 
 
