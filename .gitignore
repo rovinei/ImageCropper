@@ -57,3 +57,10 @@ typings/
 # dotenv environment variables file
 .env
 
+# composer vendor folder
+vendor
+
+# MACOS folder
+.DS_Store
+
+

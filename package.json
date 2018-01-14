@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/rovinei/ImageCropper/issues"
   },
-  "homepage": "https://github.com/rovinei/ImageCropper#readme"
+  "homepage": "https://github.com/rovinei/ImageCropper#readme",
+  "dependencies": {
+    "cropper": "^3.1.4",
+    "jquery": "^3.2.1"
+  }
 }
