@@ -1,13 +1,12 @@
 export default function (filename ,base64Image, options){
-	console.log("heyyyyyyy 0");
 	return new Promise(function(resolve, reject){
 		var formData = new FormData();
 		formData.append('base64Image', base64Image);
 		formData.append('filename', filename);
-		formData.append('options', options);
-		console.log("heyyyyyyy 1.5");
+		formData.append('compress_mode', 'manaul');
+		formData.append('quality', 50);
 		$.ajax({
-			url: 'http://localhost:8888/upload_image.php',
+			url: 'upload_image.php',
 			type: 'POST',
 			method: 'POST',
 			dataType: 'json',
@@ -15,12 +14,27 @@ export default function (filename ,base64Image, options){
 			processData: false,
 	    contentType: false,
 	    success: function(response){
-	    	console.log("heyyyyyyy 1");
-				resolve(null, {"data":"fuck"});
+	    	var result = JSON.parse(JSON.stringify(response));
+				swal({
+        	title: result.status.code == 200 ? "Succeed" : "Failed",
+        	type: result.status.code == 200 ? "success" : "error",
+        	text: result.status.message,
+        	timer: 4000,
+        	toast: true,
+        	position: "center",
+        	showConfirmButton: false,
+        });
 	    },
 	    error: function(error){
-	    	console.log("heyyyyyyy err 1");
-				reject(error);
+				swal({
+        	title: "Failed",
+        	type: "error",
+        	text: "Something went wrong while upload thumbnail.",
+        	timer: 4000,
+        	toast: true,
+        	position: "center",
+        	showConfirmButton: false,
+        });
 	    }
 		});
 	});

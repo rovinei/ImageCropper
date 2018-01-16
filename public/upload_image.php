@@ -47,12 +47,12 @@ function process_upload($filename ,$base64_image, $options){
 
 	$unique_filename = uniqid() . "_" . $filename;
 	$upload_path = joinPaths(CROPPER_UPLOAD_THUMBNAIL_DIR, $unique_filename);
-	$uploadImage = new UploadImage($base64_image, $upload_path, $quality['options']);
+	$uploadImage = new UploadImage($base64_image, $upload_path, $options['quality']);
 
 	if ($options['compress_mode'] == "manaul") {
 		if (array_key_exists('quality', $options)) {
 			try {
-				$status = $uploadImage->make_and_save();
+				$status = $uploadImage->make_and_save(true);
 				if ($status->dirname) {
 					$response = array(
 						'status' => [
@@ -108,10 +108,10 @@ class UploadImage {
 		$this->quality = $quality;
 	}
 
-	function make_and_save() {
+	function make_and_save($is_manaul_compress = false) {
 		if ($this->imageObj != null && $this->upload_path != null) {
 			$this->imageObj = $this->imageManager->make($this->imageObj);
-			$img = $this->imageObj->save($this->upload_path, $this->quality);
+			$img = $is_manaul_compress ? $this->imageObj->save($this->upload_path, (int)$this->quality) : $this->imageObj->save($this->upload_path);
 			return $img;
 		} else {
 			throw new Exception("Missing arguments, image and upload path.", ERROR_SAVE_THUMBNAIL_CODE);

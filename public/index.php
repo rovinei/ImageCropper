@@ -14,7 +14,10 @@
 		<!-- Upload image -->
 		<section id="sectionDragAndDrop">
 		    <div class="drop" id="drop">
-		        <p>Drag &amp; drop or click here to upload an image.</p>
+		       <p>
+		       	<span><i class="icon-upload fa fa-upload"></i></span>
+		        Drag &amp; drop or click here to upload an image.
+		      </p>
 		    </div>
 		    <input class="file-upload hidden" id="fileUpload" type="file">
 		</section>
@@ -53,9 +56,22 @@
 					</span>
 				</div>
 			</div>
-		  <button class="btn-crop" id="crop">
-		  	<span class='fa fa-crop'></span> Crop &amp; Save
-		  </button>
+			<div class="horizontal-setting clearfix">
+				<li class="setting-item compress-quality-auto">
+					<input id="compress-quality-auto" type="checkbox" value="auto" checked="checked">
+					<label for="compress-quality-auto">
+						<span>Auto Optimize</span>
+					</label>
+				</li>
+				<li class="setting-item manaul">
+					<input type="number" placeholder="Quality compress 1-100" id="compress-quality-manaul" class="compress-quality-manaul" disabled="disabled">
+				</li>
+			</div>
+		  <div class="crop-btn__wrapper">
+		  	<button class="btn-crop" id="crop">
+			  	<span class='fa fa-crop'></span> Crop &amp; Save
+			  </button>
+		  </div>
 		</section>
 	</div>
 	<script src="./assets/js/bundle.js"></script>

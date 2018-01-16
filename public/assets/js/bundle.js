@@ -115,6 +115,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 		}
 	});
 
+	$('#compress-quality-auto').on('change', function(e){
+		$(this).is(':checked') ? $('#compress-quality-manaul').prop('disabled', true) : $('#compress-quality-manaul').prop('disabled', false);
+	});
+
+	$('#compress-quality-manaul').on('change', function(e){
+		$(this).val() == "" ? $('#compress-quality-auto').prop('disabled', false) : $('#compress-quality-auto').prop({'disabled': true, 'checked': false});
+	});
+
 	function addImage(data) {
 	    var file = data.files[0];
 	    if (file.type.indexOf('image') === -1) {
@@ -173,6 +181,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     	imgCropper.initCropper();
 
 	    $('#crop').on('click', function(e) {
+	    	if(!$('#compress-quality-auto').is(':checked') && $('#compress-quality-manaul').val() == "") {
+	    		__WEBPACK_IMPORTED_MODULE_3_sweetalert2___default()({
+	        	title: "Error",
+	        	type: "error",
+	        	text: "Quality compress option must be specify.",
+	        	timer: 4000,
+	        	toast: true,
+	        	position: "center",
+	        	showConfirmButton: false,
+	        });
+
+	        return false;
+	    	}
 	    	imgBase64 = imgCropper.getInstance().getCroppedCanvas().toDataURL('image/jpeg');
         // new uploadCroppedImage('my_cropped_thumbnail.png', imgBase64, uploadOptions)
         // .then(function(error, response){
@@ -180,11 +201,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         // }).catch(function(error){
         // 	console.log(JSON.stringify(error));
         // });
+        var compress_mode = 
+        (
+        	$('#compress-quality-manaul').is(':disabled') 
+        	&& 
+        	$('#compress-quality-auto').is(':checked')
+        ) ? 'auto' : 'manaul';
+
+        var quality = compress_mode == 'manaul' ? parseInt($('#compress-quality-manaul').val()) : 50;
+
+        console.log(compress_mode, quality);
+
         var formData = new FormData();
 				formData.append('base64Image', imgBase64);
 				formData.append('filename', 'cropped_thumbnail.jpeg');
-				formData.append('compress_mode', 'manaul');
-				formData.append('quality', 50);
+				formData.append('compress_mode', compress_mode);
+				formData.append('quality', quality);
 				$.ajax({
 					url: 'upload_image.php',
 					type: 'POST',
@@ -14341,15 +14373,14 @@ class InvalidArgument extends Error {
 
 "use strict";
 /* unused harmony default export */ var _unused_webpack_default_export = (function (filename ,base64Image, options){
-	console.log("heyyyyyyy 0");
 	return new Promise(function(resolve, reject){
 		var formData = new FormData();
 		formData.append('base64Image', base64Image);
 		formData.append('filename', filename);
-		formData.append('options', options);
-		console.log("heyyyyyyy 1.5");
+		formData.append('compress_mode', 'manaul');
+		formData.append('quality', 50);
 		$.ajax({
-			url: 'http://localhost:8888/upload_image.php',
+			url: 'upload_image.php',
 			type: 'POST',
 			method: 'POST',
 			dataType: 'json',
@@ -14357,12 +14388,27 @@ class InvalidArgument extends Error {
 			processData: false,
 	    contentType: false,
 	    success: function(response){
-	    	console.log("heyyyyyyy 1");
-				resolve(null, {"data":"fuck"});
+	    	var result = JSON.parse(JSON.stringify(response));
+				swal({
+        	title: result.status.code == 200 ? "Succeed" : "Failed",
+        	type: result.status.code == 200 ? "success" : "error",
+        	text: result.status.message,
+        	timer: 4000,
+        	toast: true,
+        	position: "center",
+        	showConfirmButton: false,
+        });
 	    },
 	    error: function(error){
-	    	console.log("heyyyyyyy err 1");
-				reject(error);
+				swal({
+        	title: "Failed",
+        	type: "error",
+        	text: "Something went wrong while upload thumbnail.",
+        	timer: 4000,
+        	toast: true,
+        	position: "center",
+        	showConfirmButton: false,
+        });
 	    }
 		});
 	});
