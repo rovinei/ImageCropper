@@ -1,5 +1,5 @@
 # Image Cropper
-...Cropping image with javascript using cropper jQuery library
+Cropping image with javascript using cropper jQuery library, spatie/image-optimizer for image optimization.
 
 # System Server Requirements
 
@@ -17,7 +17,7 @@ Sets a maximum amount of memory in bytes that a script is allowed to allocate. R
 + GD Library (>=2.0) … or …
 + Imagick PHP extension (>=6.5.7)
 
-### Image Optimization tools (**Optional**) [spatie/image-optimizer]https://github.com/spatie/image-optimizer
+### Image Optimization tools (**Optional**) [Image optimizer](https://github.com/spatie/image-optimizer "spatie/image-optimizer")
 
 1. Here's how to install all the optimizers on Ubuntu:
 + sudo apt-get install jpegoptim
