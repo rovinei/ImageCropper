@@ -27,5 +27,9 @@ export default class ImageCropper {
 		return this.cropperInstance;
 	}
 
+	setRatio(ratio) {
+		var self = this;
+		self.cropperInstance.setAspectRatio(parseFloat(ratio));
+	}
 
 }

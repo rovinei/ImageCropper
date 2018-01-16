@@ -10,99 +10,111 @@ define('ERROR_SAVE_THUMBNAIL_CODE', 00010);
 define('ERROR_PARAMS', 00011);
 define('ERROR_IMAGE_OPTIMIZER', 00012);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
 	isset($_POST['base64Image']) && 
-	// isset($_POST['options']) && 
-	// is_array($_POST['options']) &&
-	(strpos($_POST['base64Image'], 'data:image/jpeg;base64,') || strpos($_POST['base64Image'], 'data:image/png;base64,'))
+	isset($_POST['compress_mode'])
 ) {
+
 	$post_filename = isset($_POST['filename']) ? $_POST['filename'] : '';
 	$post_base64_image = $_POST['base64Image'];
-	$post_options = new array('compress_mode', 'optimizer');
-
+	$post_options = array(
+		'compress_mode' => $_POST['compress_mode'], 
+		'quality' => isset($_POST['quality']) ? $_POST['quality'] : 50
+	);
 	try {
-		process_upload($post_filename, $post_base64_image, $post_options);
-		$response = new array(
-			'status' => ['code' => 501, 'message' => $e->getMessage()],
-			'data' => [
-
-			]
-		);
+		$response = process_upload($post_filename, $post_base64_image, $post_options);
+		echo json_encode($response);
 	} catch (Exception $e) {
-		$response = new array(
+		$response = array(
 			'status' => ['code' => 501, 'message' => $e->getMessage()],
 			'data' => [
 
 			]
 		);
+		echo json_encode($response);
 	}
-
-	return json_encode($response);
 }
 
-private function process_upload($filename ,$base64_image, $options){
-	if (!is_string($filename) || 
-		!is_string($base64_image) || 
+function process_upload($filename ,$base64_image, $options){
+	if (!is_string($base64_image) || 
 		!is_array($options) || 
 		!array_key_exists('compress_mode', $options)
 	) {
 		throw new Exception("Parameters dose not met requirements.", ERROR_PARAMS);
-		
 	}
 
-	$manager = new ImageManager(array('driver' => 'imagick'));
-	$imageObj = $manager->make($base64_image);
-	$upload_path = joinPaths(CROPPER_UPLOAD_THUMBNAIL_DIR, $filename)
-	$response = new array();
+	$optimizerChain = OptimizerChainFactory::create();
 
-	switch ($options->compress_mode) {
-		case 'manaul':
-			if (array_key_exists('quality', $options)) {
-				try {
-					$imageObj->save($upload_path, (int) $options->quality);
-					$response['status'] = [
+	$unique_filename = uniqid() . "_" . $filename;
+	$upload_path = joinPaths(CROPPER_UPLOAD_THUMBNAIL_DIR, $unique_filename);
+	$uploadImage = new UploadImage($base64_image, $upload_path, $quality['options']);
+
+	if ($options['compress_mode'] == "manaul") {
+		if (array_key_exists('quality', $options)) {
+			try {
+				$status = $uploadImage->make_and_save();
+				if ($status->dirname) {
+					$response = array(
+						'status' => [
 							'code' => 200,
 							'message' => 'successfully uploaded cropped and optimized quality of thumbnail.'
-						];
-					$response['data'] = [
-							'img_obj' => $imageObj,
+						],
+						'data' => [
 							'uploaded_path' => $upload_path
-						];
-
-				} catch (Exception $e) {
-					throw new Exception($e->getMessage(), ERROR_SAVE_THUMBNAIL_CODE);
-				}
-			}
-			break;
-		default:
-			try {
-				$imageObj->save($upload_path);
-				$optimizerChain->optimize($upload_path);
-				$response['status'] = [
-						'code' => 200,
-						'message' => 'successfully uploaded and automatically optimized quality of thumbnail.'
-					];
-				$response['data'] = [
-						'img_obj' => $imageObj,
-						'uploaded_path' => $upload_path
-					];
-			} catch (Exception $e) {
-				if (strpos(get_class($e), 'NotWritableException')) {
-					throw new Exception($e->getMessage(), 1);
+						]
+					);
+					return $response;
 				} else {
-					throw new Exception("failed to optimize uploaded thumbnail image.", ERROR_IMAGE_OPTIMIZER);
+					throw new Exception("Failed to save thumbnail.", ERROR_SAVE_THUMBNAIL_CODE);
 				}
-				
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage(), ERROR_SAVE_THUMBNAIL_CODE);
 			}
-			break;
+		}	
+	} else {
+		try {
+			$status = $uploadImage->make_and_save();
+			if ($status->dirname) {
+				$optimizerChain->optimize($upload_path);
+				$response = array(
+					'status' => [
+						'code' => 200,
+						'message' => 'successfully uploaded cropped and automatically optimized quality of thumbnail.'
+					],
+					'data' => [
+						'uploaded_path' => $upload_path
+					]
+				);
+				return $response;
+			} else {
+				throw new Exception("Failed to save thumbnail.", ERROR_SAVE_THUMBNAIL_CODE);
+			}
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage(), ERROR_SAVE_THUMBNAIL_CODE);
+		}
 	}
-
-	return json_encode($response);
-	
 }
 
-private function joinPaths($leftHandSide, $rightHandSide) { 
+function joinPaths($leftHandSide, $rightHandSide) { 
     return rtrim($leftHandSide, '/') .'/'. ltrim($rightHandSide, '/');
 }
 
-?>
+class UploadImage {
+	function __construct($imageObj = null, $upload_path = null, $quality = 50)
+	{
+		$this->imageManager = new ImageManager(array('driver' => 'gd'));
+		$this->imageObj = $imageObj;
+		$this->upload_path = $upload_path;
+		$this->quality = $quality;
+	}
+
+	function make_and_save() {
+		if ($this->imageObj != null && $this->upload_path != null) {
+			$this->imageObj = $this->imageManager->make($this->imageObj);
+			$img = $this->imageObj->save($this->upload_path, $this->quality);
+			return $img;
+		} else {
+			throw new Exception("Missing arguments, image and upload path.", ERROR_SAVE_THUMBNAIL_CODE);
+		}
+	}
+}

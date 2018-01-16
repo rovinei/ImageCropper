@@ -11,7 +11,7 @@ body {
     padding: 20px;
     text-align: center;
     color: #111;
-    background-image: radial-gradient(ellipse farthest-corner at center, #7abcff 0%,#4096ee 100%);
+    background: #fafafa;
 }
 
 img {
@@ -22,45 +22,9 @@ img {
     display: none;
 }
 
-.drop {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    font-family: Lobster, Arial, serif;
-    font-size: 30px;
-    color: #333;
-    background-color: rgba(255,255,255,.2);
-    border: 5px dashed rgba(51,51,51,.4);
-    cursor: pointer;
-    transition-properties: border;
-    transition-duration: 0.2s;
-  
-    &.dragging,
-    &:hover {
-        border-color: rgba(51,51,51,.8);
-    }
-  
-    p {
-        position: absolute;
-        top: 50%;
-        width: 100%;
-        margin-top: -19px;
-        margin-bottom: 0;
-        text-align: center;
-    }
-}
-
-#sectionResize,
-#sectionDragAndDrop{
-    max-width: 400px;
-    max-height: 400px;
-    width: 400px;
-    height: 400px;
-    position: relative;
-    margin: 0 auto;
-
-    &:after,
-    &before{
+.clearfix {
+    &:before,
+    &:after {
         display: table;
         content: "";
     }
@@ -70,37 +34,149 @@ img {
     }
 }
 
-.image-resize {
+.cropper {
     position: relative;
-    width: 100%;
-    margin: auto;
-}
-
-.btn {
-    margin-top: 20px;
-    padding: 8px 25px;
-    font-family: "Ubuntu";
-    font-size: 16px;
-    color: #fff;
-    background-image: linear-gradient(to bottom, #c92437 0%, darken(#c92437, 10%) 100%);
-    border: 0;
-    border-radius: 5px;
-    box-shadow: 1px 1px 2px rgba(0,0,0,.3);
-  
-    .fa:first-child {
-        margin-right: 5px; 
+    .drop {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        font-family: Lobster, Arial, serif;
+        font-size: 33px;
+        line-height: 40px;
+        color: #333;
+        background-color: rgba(255,255,255,1);
+        border: 5px dashed rgba(51,51,51,.3);
+        cursor: pointer;
+        transition-properties: border;
+        transition-duration: 0.2s;
+      
+        &.dragging,
+        &:hover {
+            border-color: rgba(51,51,51,.8);
+        }
+      
+        p {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            padding: 20px;
+            transform: translateY(-50%);
+            margin: 0;
+            text-align: center;
+        }
     }
-}
 
-.cropper-thumbnail__preview {
-    margin: auto;
-    padding: 5px;
-    background-color: rgba(255,255,255,.4);
-    border-radius: 5px;
-  
-    img {
-        display: block;
+    #sectionResize,
+    #sectionDragAndDrop{
+        max-width: 400px;
+        max-height: 400px;
+        width: 400px;
+        height: 400px;
+        position: relative;
+        margin: 0 auto;
+
+        &:after,
+        &before{
+            display: table;
+            content: "";
+        }
+
+        &:after{
+            clear: both;
+        }
+    }
+
+    .image-resize,
+    .image-resize__outter {
+        position: relative;
+        width: 100%;
+        margin: auto;
+    }
+
+    .image-resize__outter {
+        display: flex;
+    }
+
+
+
+    .image-resize__bg {
+        float: left;
+        position: relative;
+        padding: 10px;
+        background: aliceblue;
+        flex: 1;
+    }
+
+    .ratio-choice__wrapper {
+        position: relative;
+        width: 60px;
+        float: left;
+        display: flex;
+        flex-direction: column;
+        flex-basis: all;
+
+        .choice {
+            display: block;
+            padding: 0 0 1px 0;
+            flex: 1;
+            display: flex;
+        }
+
+        button {
+            outline: none;
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 5px;
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            font-size: 15px;
+            font-family: "Ubuntu", sans-serif;
+            transition: background 0.1s ease-in, transform 0.07s ease-out;
+
+            &:hover {
+                background: #555;
+                transform: translateX(5px);
+            }
+        }
+    }
+
+    .btn-crop {
+        margin-top: 20px;
+        padding: 10px 25px;
+        font-family: "Ubuntu";
+        font-size: 16px;
+        color: #fff;
+        background-image: linear-gradient(to bottom, #60c5ba 0%, #61b9ae 100%);
+        border: 0;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 1px 1px 2px rgba(0,0,0,.3);
+        -webkit-transition: box-shadow 0.3s ease;
+        -moz-transition: box-shadow 0.3s ease;
+        -ms-transition: box-shadow 0.3s ease;
+        -o-transition: box-shadow 0.3s ease;
+        transition: all 0.7s ease;
+        &:hover {
+            box-shadow: inset 0px 2px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .fa:first-child {
+            margin-right: 5px; 
+        }
+    }
+
+    .cropper-thumbnail__preview {
+        margin: auto;
+        padding: 5px;
+        background-color: rgba(255,255,255,.4);
         border-radius: 5px;
+      
+        img {
+            display: block;
+            border-radius: 5px;
+        }
     }
 }
 

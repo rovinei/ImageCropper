@@ -1,0 +1,67 @@
+<html>
+      <head>
+        <meta charset="UTF-8">
+        <title>README.md</title>
+      </head>
+      <body>
+        <h1 id="image-cropper">Image Cropper</h1>
+<p>...Cropping image with javascript using cropper jQuery library</p>
+<h1 id="system-server-requirements">System Server Requirements</h1>
+<h3 id="php-ini">php.ini</h3>
+<ol>
+<li>upload_max_filesize</li>
+</ol>
+<p>...Sets a maximum amount of memory in bytes that a script is allowed to allocate. Resizing a 3000 x 2000 pixel image to 300 x 200 may take up to 32MB memory.</p>
+<ol>
+<li><p>php Extensions and version : </p>
+</li>
+<li><p>PHP &gt;= 7.0</p>
+</li>
+<li>Fileinfo Extension</li>
+<li>GD Library (&gt;=2.0) … or …</li>
+<li>Imagick PHP extension (&gt;=6.5.7)</li>
+</ol>
+<h3 id="image-optimization-tools-https-github-com-spatie-image-optimizer-">Image Optimization tools (<a href="https://github.com/spatie/image-optimizer">https://github.com/spatie/image-optimizer</a>)</h3>
+<ol>
+<li>Here&#39;s how to install all the optimizers on Ubuntu:</li>
+<li>sudo apt-get install jpegoptim</li>
+<li>sudo apt-get install optipng</li>
+<li>sudo apt-get install pngquant</li>
+<li>sudo npm install -g svgo</li>
+<li><p>sudo apt-get install gifsicle</p>
+</li>
+<li><p>And here&#39;s how to install the binaries on MacOS (using Homebrew):</p>
+</li>
+<li>brew install jpegoptim</li>
+<li>brew install optipng</li>
+<li>brew install pngquant</li>
+<li>brew install svgo</li>
+<li>brew install gifsicle</li>
+</ol>
+<p><strong>Other</strong></p>
+<ul>
+<li>brew install --with-openssl curl</li>
+<li>brew install --with-homebrew-curl --with-apache php71</li>
+<li>brew install php71-mcrypt php71-imagick</li>
+</ul>
+<h3 id="installation-and-setup">Installation and setup</h3>
+<ol>
+<li>Install php dependencies via composer<pre><code class="lang-php">run &gt; composer install
+</code></pre>
+</li>
+<li>Install npm dependencies<pre><code class="lang-nodejs">run &gt; npm install
+</code></pre>
+</li>
+</ol>
+<h3 id="compile-javascript-ecma2015-into-bundle-js">Compile javascript ECMA2015 into bundle.js</h3>
+<ul>
+<li>Install webpack : run &gt; npm install webpack -g
+...run &gt; webpack</li>
+</ul>
+<h3 id="compile-scss-file-into-sytlesheet">Compile scss file into sytlesheet</h3>
+<ul>
+<li>Install prepros.io</li>
+</ul>
+
+      </body>
+    </html>

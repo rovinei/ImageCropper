@@ -82,6 +82,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 (function($){
 	var $imgElement = $('#imageElement');
+	var imgCropper;
 	$('#drop').on('click', function() {
 	    $('#fileUpload').trigger('click');
 	});
@@ -107,6 +108,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	    addImage(data);
 	});
 
+	$('.btn-ratio').on('click', function(e){
+		e.preventDefault();
+		if (imgCropper) {
+			imgCropper.setRatio($(this).attr('data-ratio'));
+		}
+	});
+
 	function addImage(data) {
 	    var file = data.files[0];
 	    if (file.type.indexOf('image') === -1) {
@@ -116,31 +124,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	        	text: "File upload must be image.",
 	        	timer: 4000,
 	        	toast: true,
-	        	position: "center"
+	        	position: "center",
+	        	showConfirmButton: false,
 	        });
 	        return false;
 	    }
 
 	    var reader = new FileReader();
-	    reader.onload = function(event) {
-	        var img = new Image();
-	        img.onload = function() {
-	            if (img.width < 200 || img.height < 200) {
-	            	__WEBPACK_IMPORTED_MODULE_3_sweetalert2___default()({
-			        	title: "Failed",
-			        	type: "error",
-			        	text: "Sorry, the image you uploaded doesn\'t appear to be large enough.",
-			        	timer: 4000,
-			        	toast: true,
-			        	position: "center"
-			        });
-	                return false;
-	            }
-	            cropImage(img);
-	        }
-	        img.src = event.target.result;
-	    }
-	    reader.readAsDataURL(file);
+    reader.onload = function(event) {
+      var img = new Image();
+      img.onload = function() {
+        if (img.width < 200 || img.height < 200) {
+      	__WEBPACK_IMPORTED_MODULE_3_sweetalert2___default()({
+        	title: "Failed",
+        	type: "error",
+        	text: "Sorry, the image you uploaded doesn\'t appear to be large enough.",
+        	timer: 4000,
+        	toast: true,
+        	position: "center",
+        	showConfirmButton: false,
+        });
+            return false;
+        }
+      	cropImage(img);
+      }
+      img.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
 	}
 
 	function cropImage(originalImage) {
@@ -149,10 +159,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	    $('#imageResize').html(originalImage);
 	    $('#sectionDragAndDrop').addClass('hidden');
 	    $('#sectionResize').removeClass('hidden');
-	    var isReadyForCrop = false,
-	    	uploadOptions = {
-	    		compress_mode: 'auto',
-	    	};
+	    var isReadyForCrop = false;
 	    originalImage.addEventListener('ready', function() {
 	    	console.log('Image ready to crop.');
 	    	isReadyForCrop = true;
@@ -161,19 +168,55 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 	    var cropperOption = {
     		preview: '#previewContainer',
     	};
-    	var imgCropper = new __WEBPACK_IMPORTED_MODULE_1__image_cropper__["a" /* default */](originalImage, cropperOption);
+    	imgCropper = new __WEBPACK_IMPORTED_MODULE_1__image_cropper__["a" /* default */](originalImage, cropperOption);
     	var imgBase64 = 'data:image/png;base64,';
     	imgCropper.initCropper();
 
 	    $('#crop').on('click', function(e) {
-	    	e.preventDefault();
-	    	imgBase64 = imgCropper.getInstance().getCroppedCanvas().toDataURL('image/png');
-	        var uploadPromise = Object(__WEBPACK_IMPORTED_MODULE_2__upload_image__["a" /* default */])('my_cropped_thumbnail.png', imgBase64, uploadOptions);
-	        uploadPromise.then(function(error, response){
-	        	console.log(JSON.stringify(response));
-	        }).catch(function(error){
-	        	console.log(JSON.stringify(error));
-	        });
+	    	imgBase64 = imgCropper.getInstance().getCroppedCanvas().toDataURL('image/jpeg');
+        // new uploadCroppedImage('my_cropped_thumbnail.png', imgBase64, uploadOptions)
+        // .then(function(error, response){
+        // 	console.log(response);
+        // }).catch(function(error){
+        // 	console.log(JSON.stringify(error));
+        // });
+        var formData = new FormData();
+				formData.append('base64Image', imgBase64);
+				formData.append('filename', 'cropped_thumbnail.jpeg');
+				formData.append('compress_mode', 'manaul');
+				formData.append('quality', 50);
+				$.ajax({
+					url: 'upload_image.php',
+					type: 'POST',
+					method: 'POST',
+					dataType: 'json',
+					data: formData,
+					processData: false,
+			    contentType: false,
+			    success: function(response){
+			    	var result = JSON.parse(JSON.stringify(response));
+						__WEBPACK_IMPORTED_MODULE_3_sweetalert2___default()({
+		        	title: result.status.code == 200 ? "Succeed" : "Failed",
+		        	type: result.status.code == 200 ? "success" : "error",
+		        	text: result.status.message,
+		        	timer: 4000,
+		        	toast: true,
+		        	position: "center",
+		        	showConfirmButton: false,
+		        });
+			    },
+			    error: function(error){
+						__WEBPACK_IMPORTED_MODULE_3_sweetalert2___default()({
+		        	title: "Failed",
+		        	type: "error",
+		        	text: "Something went wrong while upload thumbnail.",
+		        	timer: 4000,
+		        	toast: true,
+		        	position: "center",
+		        	showConfirmButton: false,
+		        });
+			    }
+				});
 	    });
 	  
 	}
@@ -10480,6 +10523,10 @@ class ImageCropper {
 		return this.cropperInstance;
 	}
 
+	setRatio(ratio) {
+		var self = this;
+		self.cropperInstance.setAspectRatio(parseFloat(ratio));
+	}
 
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ImageCropper;
@@ -14293,31 +14340,33 @@ class InvalidArgument extends Error {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = uploadCroppedImage;
-function uploadCroppedImage(filename ,base64Image, options){
-	var formData = new FormData();
-	formData.append('base64Image', base64Image);
-	formData.append('filename', filename);
-	formData.append('options', options);
-
-	return new Promise((resolve, reject) => {
+/* unused harmony default export */ var _unused_webpack_default_export = (function (filename ,base64Image, options){
+	console.log("heyyyyyyy 0");
+	return new Promise(function(resolve, reject){
+		var formData = new FormData();
+		formData.append('base64Image', base64Image);
+		formData.append('filename', filename);
+		formData.append('options', options);
+		console.log("heyyyyyyy 1.5");
 		$.ajax({
-			url: 'upload_image.php',
+			url: 'http://localhost:8888/upload_image.php',
 			type: 'POST',
+			method: 'POST',
 			dataType: 'json',
 			data: formData,
 			processData: false,
-	    	contentType: false,
-		})
-		.done(function(response) {
-			resolve(null, response);
-		})
-		.fail(function(error) {
-			reject(error);
+	    contentType: false,
+	    success: function(response){
+	    	console.log("heyyyyyyy 1");
+				resolve(null, {"data":"fuck"});
+	    },
+	    error: function(error){
+	    	console.log("heyyyyyyy err 1");
+				reject(error);
+	    }
 		});
 	});
-	
-}
+});
 
 /***/ }),
 /* 6 */
