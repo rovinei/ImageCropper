@@ -7,7 +7,7 @@
 
 1. upload_max_filesize
 
-...Sets a maximum amount of memory in bytes that a script is allowed to allocate. Resizing a 3000 x 2000 pixel image to 300 x 200 may take up to 32MB memory.
+Sets a maximum amount of memory in bytes that a script is allowed to allocate. Resizing a 3000 x 2000 pixel image to 300 x 200 may take up to 32MB memory.
 
 
 2. php Extensions and version : 
@@ -17,7 +17,7 @@
 + GD Library (>=2.0) … or …
 + Imagick PHP extension (>=6.5.7)
 
-### Image Optimization tools (https://github.com/spatie/image-optimizer)
+### Image Optimization tools (**Optional**) [spatie/image-optimizer]https://github.com/spatie/image-optimizer
 
 1. Here's how to install all the optimizers on Ubuntu:
 + sudo apt-get install jpegoptim
@@ -43,16 +43,22 @@
 ### Installation and setup
 1. Install php dependencies via composer
 ```php
-run > composer install
+_project_ > composer install
 ```
 2. Install npm dependencies
-```nodejs
-run > npm install
+```node
+_project_ > npm install
 ```
 
 ### Compile javascript ECMA2015 into bundle.js
-+ Install webpack : run > npm install webpack -g
-...run > webpack
++ Install webpack : 
+```node
+_project_ > npm install webpack -g
+```
+```node
+_project_ > npm install webpack -g
+_project_ > webpack
+```
 
 ### Compile scss file into sytlesheet
 + Install prepros.io
